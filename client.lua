@@ -150,17 +150,19 @@ TriggerEvent("chat:addSuggestion", "/alarm", "Enable the vehicle alarm. Usage: /
 end)
 
 -- Emergency Brake --
-RegisterCommand('ebrake', function()
+RegisterCommand('ebrake', function(source, args)
 
 local getPlayerPed = GetPlayerPed(-1)
 local playerVehicle = GetVehiclePedIsUsing(getPlayerPed) -- get player vehicle
 local isPedInVehicle = IsPedInVehicle(getPlayerPed, playerVehicle, 0)
 local vehicleClass = GetVehicleClass(playerVehicle) -- get player vehicle's class
 
-    if isPedInVehicle == 1 and vehicleClass ~= 15 or 16 then
-    BringVehicleToHalt(playerVehicle, 42.0, 0.01)
+    if isPedInVehicle == 1 and vehicleClass ~= 15 or 16 and args[1] == "on" then
+        BringVehicleToHalt(playerVehicle, 42.0, 100, 0)
+    elseif isPedInVehicle == 1 and vehicleClass ~= 15 or 16 and args[1] == "off" then
+        StopBringVehicleToHalt(playerVehicle)
     else
-        exports.pNotify:SendNotification({text = "You are not in a vehicle, or your vehicle does not have an emergency brake.", type = "error", timeout = (10000), layout = "bottomCenter",})
+        exports.pNotify:SendNotification({text = "You are not in a vehicle that has an emergency brake or you did not specify on/off.", type = "error", timeout = (10000), layout = "bottomCenter",})
     end
 
 TriggerEvent("chat:addSuggestion", "/ebrake", "Enable a vehicle's emergency brake. The emergency brake cannot be disabled.")
@@ -228,11 +230,24 @@ RegisterCommand('placecarbomb', function()
 local getPlayerPed = GetPlayerPed(-1)
 local playerVehicle = GetVehiclePedIsUsing(getPlayerPed) -- get player vehicle
 local isPedInVehicle = IsPedInVehicle(getPlayerPed, playerVehicle, 0)
-    if isPedInVehicle == 1 then
+local playerLoc = GetEntityCoords(getPlayerPed)
+    if isPedInVehicle == 1 and GetDistanceBetweenCoords(1179.18, 2639.21, 39.35, playerLoc.x, playerLoc.y, playerLoc.z) < 12 then
+        AddVehiclePhoneExplosiveDevice(playerVehicle)
+        exports.pNotify:SendNotification({text = "You have placed a car bomb.", type = "success", timeout = (10000), layout = "bottomCenter",})
+    elseif isPedInVehicle == 1 and GetDistanceBetweenCoords(106.11, 6624.48, 33.36, playerLoc.x, playerLoc.y, playerLoc.z) < 12 then
+        AddVehiclePhoneExplosiveDevice(playerVehicle)
+        exports.pNotify:SendNotification({text = "You have placed a car bomb.", type = "success", timeout = (10000), layout = "bottomCenter",})
+    elseif isPedInVehicle == 1 and GetDistanceBetweenCoords(-335.5, -134.08, 39.51, playerLoc.x, playerLoc.y, playerLoc.z) < 21 then
+        AddVehiclePhoneExplosiveDevice(playerVehicle)
+        exports.pNotify:SendNotification({text = "You have placed a car bomb.", type = "success", timeout = (10000), layout = "bottomCenter",})
+    elseif isPedInVehicle == 1 and GetDistanceBetweenCoords(-208.78, -1325.7, 30.89, playerLoc.x, playerLoc.y, playerLoc.z) < 15 then
+        AddVehiclePhoneExplosiveDevice(playerVehicle)
+        exports.pNotify:SendNotification({text = "You have placed a car bomb.", type = "success", timeout = (10000), layout = "bottomCenter",})
+    elseif isPedInVehicle == 1 and GetDistanceBetweenCoords(-1154.54, -2009.08, 13.18, playerLoc.x, playerLoc.y, playerLoc.z) < 21 then
         AddVehiclePhoneExplosiveDevice(playerVehicle)
         exports.pNotify:SendNotification({text = "You have placed a car bomb.", type = "success", timeout = (10000), layout = "bottomCenter",})
     else
-        exports.pNotify:SendNotification({text = "You are not in a vehicle.", type = "success", timeout = (10000), layout = "bottomCenter",})
+        exports.pNotify:SendNotification({text = "You are not inside of a Customs Shop with a vehicle.", type = "error", timeout = (10000), layout = "bottomCenter",})
     end
 end)
 
@@ -245,15 +260,25 @@ RegisterCommand('removecarbomb', function()
     local doesCarHaveBomb = HasVehiclePhoneExplosiveDevice(playerLastVehicle)
     local doesCurrentCarHaveBomb = HasVehiclePhoneExplosiveDevice(playerVehicle)
     local isPedInVehicle = IsPedInVehicle(getPlayerPed, playerVehicle, 0)
+    local playerLoc = GetEntityCoords(getPlayerPed)
     
-    if doesCarHaveBomb == 1 then
-        ClearVehiclePhoneExplosiveDevice(playerLastVehicle)
+    if doesCurrentCarHaveBomb == 1 and isPedInVehicle == 1 and GetDistanceBetweenCoords(1179.18, 2639.21, 39.35, playerLoc.x, playerLoc.y, playerLoc.z) < 12 then
+        ClearVehiclePhoneExplosiveDevice(playerVehicle)
         exports.pNotify:SendNotification({text = "Your car bomb is removed.", type = "success", timeout = (10000), layout = "bottomCenter",})
-    elseif doesCurrentCarHaveBomb == 1 then
+    elseif doesCurrentCarHaveBomb == 1 and isPedInVehicle == 1 and GetDistanceBetweenCoords(106.11, 6624.48, 33.36, playerLoc.x, playerLoc.y, playerLoc.z) < 12 then
+        ClearVehiclePhoneExplosiveDevice(playerVehicle)
+        exports.pNotify:SendNotification({text = "Your car bomb is removed.", type = "success", timeout = (10000), layout = "bottomCenter",})
+    elseif doesCurrentCarHaveBomb == 1 and isPedInVehicle == 1 and GetDistanceBetweenCoords(-335.5, -134.08, 39.51, playerLoc.x, playerLoc.y, playerLoc.z) < 12 then
+        ClearVehiclePhoneExplosiveDevice(playerVehicle)
+        exports.pNotify:SendNotification({text = "Your car bomb is removed.", type = "success", timeout = (10000), layout = "bottomCenter",})
+    elseif doesCurrentCarHaveBomb == 1 and isPedInVehicle == 1 and GetDistanceBetweenCoords(-208.78, -1325.7, 30.89, playerLoc.x, playerLoc.y, playerLoc.z) < 12 then
+        ClearVehiclePhoneExplosiveDevice(playerVehicle)
+        exports.pNotify:SendNotification({text = "Your car bomb is removed.", type = "success", timeout = (10000), layout = "bottomCenter",})
+    elseif doesCurrentCarHaveBomb == 1 and isPedInVehicle == 1 and GetDistanceBetweenCoords(-1154.54, -2009.08, 13.18, playerLoc.x, playerLoc.y, playerLoc.z) < 12 then
         ClearVehiclePhoneExplosiveDevice(playerVehicle)
         exports.pNotify:SendNotification({text = "Your car bomb is removed.", type = "success", timeout = (10000), layout = "bottomCenter",})
     else
-        exports.pNotify:SendNotification({text = "The vehicle doesn't have a car bomb.", type = "error", timeout = (10000), layout = "bottomCenter",})
+        exports.pNotify:SendNotification({text = "You are not inside of a Customs Shop with a vehicle.", type = "error", timeout = (10000), layout = "bottomCenter",})
     end
 end)
 
